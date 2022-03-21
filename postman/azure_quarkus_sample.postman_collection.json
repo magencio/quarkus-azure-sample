@@ -1,0 +1,565 @@
+{
+	"info": {
+		"_postman_id": "bc257b94-d2f3-46c5-8a07-a863953bbcab",
+		"name": "azure_quarkus_sample",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authenticate Producer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains bearer token for Producer\", () => {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.token_type).to.eql('Bearer')\r",
+							"    pm.expect(typeof(jsonData.access_token)).to.eql('string')\r",
+							"    pm.environment.set(\"producer-bearer-token\", jsonData.access_token);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "default"
+						},
+						{
+							"key": "client_id",
+							"value": "{{producer-client-id}}",
+							"type": "default"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{producer-client-secret}}",
+							"type": "default"
+						},
+						{
+							"key": "scope",
+							"value": "api://{{api-client-id}}/.default",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						"{{tenant}}",
+						"oauth2",
+						"v2.0",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authenticate Consumer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains bearer token for Consumer\", () => {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.token_type).to.eql('Bearer')\r",
+							"    pm.expect(typeof(jsonData.access_token)).to.eql('string')\r",
+							"    pm.environment.set(\"consumer-bearer-token\", jsonData.access_token);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "default"
+						},
+						{
+							"key": "client_id",
+							"value": "{{consumer-client-id}}",
+							"type": "default"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{consumer-client-secret}}",
+							"type": "default"
+						},
+						{
+							"key": "scope",
+							"value": "api://{{api-client-id}}/.default",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						"{{tenant}}",
+						"oauth2",
+						"v2.0",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Is producer-api alive?",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status is UP\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"UP\")\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{producer-api-host}}:{{producer-api-port}}/q/health/live",
+					"host": [
+						"{{producer-api-host}}"
+					],
+					"port": "{{producer-api-port}}",
+					"path": [
+						"q",
+						"health",
+						"live"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Is producer-api ready?",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status is UP\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"UP\")\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{producer-api-host}}:{{producer-api-port}}/q/health/ready",
+					"host": [
+						"{{producer-api-host}}"
+					],
+					"port": "{{producer-api-port}}",
+					"path": [
+						"q",
+						"health",
+						"ready"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Is consumer-api alive?",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status is UP\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"UP\")\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{consumer-api-host}}:{{consumer-api-port}}/q/health/live",
+					"host": [
+						"{{consumer-api-host}}"
+					],
+					"port": "{{consumer-api-port}}",
+					"path": [
+						"q",
+						"health",
+						"live"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Is consumer-api ready?",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status is UP\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"UP\")\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{consumer-api-host}}:{{consumer-api-port}}/q/health/ready",
+					"host": [
+						"{{consumer-api-host}}"
+					],
+					"port": "{{consumer-api-port}}",
+					"path": [
+						"q",
+						"health",
+						"ready"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send operation to producer-api with Producer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 202\", function () {\r",
+							"    pm.response.to.have.status(202);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains operationId\", () => {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(typeof(jsonData.operationId)).to.eql('string')\r",
+							"    pm.environment.set(\"operationId\", jsonData.operationId);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{producer-bearer-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"leftOperand\": 1,\r\n    \"operation\": \"+\",\r\n    \"rightOperand\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{producer-api-host}}:{{producer-api-port}}/operation",
+					"host": [
+						"{{producer-api-host}}"
+					],
+					"port": "{{producer-api-port}}",
+					"path": [
+						"operation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get result from consumer-api with Producer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains requested operationId\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var expectedOperationId = pm.environment.get(\"operationId\");\r",
+							"    pm.expect(jsonData.operationId).to.eql(expectedOperationId)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response body contains result\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(typeof(jsonData.result)).to.eql('number')\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Allow some time for the request to be processed\r",
+							"setTimeout(() => {}, 1000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{producer-bearer-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{consumer-api-host}}:{{consumer-api-port}}/result/{{operationId}}",
+					"host": [
+						"{{consumer-api-host}}"
+					],
+					"port": "{{consumer-api-port}}",
+					"path": [
+						"result",
+						"{{operationId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get result from consumer-api with Consumer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains requested operationId\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var expectedOperationId = pm.environment.get(\"operationId\");\r",
+							"    pm.expect(jsonData.operationId).to.eql(expectedOperationId)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response body contains result\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(typeof(jsonData.result)).to.eql('number')\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Allow some time for the request to be processed\r",
+							"setTimeout(() => {}, 1000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{consumer-bearer-token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{consumer-api-host}}:{{consumer-api-port}}/result/{{operationId}}",
+					"host": [
+						"{{consumer-api-host}}"
+					],
+					"port": "{{consumer-api-port}}",
+					"path": [
+						"result",
+						"{{operationId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "scope",
+				"value": "openid api://{{api-client-id}}/API.Access",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{api-client-secret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{api-client-id}}",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/authorize",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token",
+				"type": "string"
+			},
+			{
+				"key": "useBrowser",
+				"value": true,
+				"type": "boolean"
+			},
+			{
+				"key": "tokenName",
+				"value": "Azure Quarkus Sample",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
